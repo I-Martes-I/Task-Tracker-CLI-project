@@ -1,4 +1,18 @@
 import sys
+import json
+import datetime
+
+def addTask(id = len(tasks), description = "Add your description here", status = "todo", createdAt = datetime.datetime.now(), updatedAt = datetime.datetime.now()):
+    task = [{"id": id, "description": description, "status": status, "createdAt": createdAt, "updatedAt": updatedAt}]
+    tasks.append(task)
+
+try:
+    with open("tasks.json", "r") as f:
+        tasks = json.load(f)
+except FileNotFoundError:
+    tasks = []
+except json.JSONDecodeError:
+    tasks = []
 
 args = sys.argv
 
@@ -13,6 +27,8 @@ if command == "add":
         print(f"You need an argument after command '{command}'")
     else:
         description = args[2]
+        addTask(, , )
+        
         print(f"Task '{description}' added")
 elif command == "list":
     pass
@@ -25,3 +41,6 @@ elif command == "delete":
         print(f"Delete task with ID {description}")
 else:
     print(f"There is no such command as '{command}'")
+
+    #task = [{"id": "", "description": "", "status": "", "createdAt": "", "updatedAt": ""}]
+    #task = [{"id": len(tasks), "description": "Add your description here", "status": "todo", "createdAt": datetime.datetime.now(), "updatedAt": datetime.datetime.now()}]

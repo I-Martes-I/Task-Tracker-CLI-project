@@ -8,9 +8,7 @@ except FileNotFoundError:
 except json.JSONDecodeError:
     tasks = []
     
-task = [
-    {"id": 1, "description": "Buy groceries", "status": "todo"}
-]
+task = {"id": 1, "description": "Buy groceries", "status": "todo"}
 
 tasks.append(task)
 
