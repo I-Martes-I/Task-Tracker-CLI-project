@@ -20,55 +20,17 @@ cd task-tracker
 
 ### Commands
 
-#### Add a task
-```bash
-python task_cli.py add "Buy groceries"
-# Output: New task 'Buy groceries' added!
-```
 
-#### Update a task
 ```bash
-python task_cli.py update 1 "Cook dinner"
-# Output: Task updated!
-```
-
-#### Delete a task
-```bash
-python task_cli.py delete 1
-# Output: Task deleted!
-```
-
-#### Mark a task as in progress
-```bash
-python task_cli.py mark-in-progress 1
-# Output: Status was changed!
-```
-
-#### Mark a task as done
-```bash
-python task_cli.py mark-done 1
-# Output: Status was changed!
-```
-
-#### Mark a task as todo
-```bash
-python task_cli.py mark-todo 1
-# Output: Status was changed!
-```
-
-#### List all tasks
-```bash
-python task_cli.py list
-```
-
-#### List tasks by status
-```bash
-python task_cli.py list todo
-python task_cli.py list in-progress
-python task_cli.py list done
-```
-
-#### Show help
-```bash
-python task_cli.py help
+  add <description>          - Add a new task
+  update <id> <description>  - Update a task
+  delete <id>                - Delete a task
+  mark-in-progress <id>      - Mark a task as in progress
+  mark-done <id>             - Mark a task as done
+  mark-todo <id>             - Mark a task as todo
+  list                       - List all tasks
+  list todo                  - List all todo tasks
+  list in-progress           - List all in-progress tasks
+  list done                  - List all done tasks
+  help                       - Show this help message
 ```
