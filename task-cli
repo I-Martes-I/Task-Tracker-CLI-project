@@ -1,0 +1,174 @@
+#!/usr/bin/env python3
+import sys
+import json
+import datetime
+
+# Check if ID is int type
+def get_task_id(arg):
+    try:
+        return int(arg)
+    except ValueError:
+        print(f"ID must be a number, not '{arg}'")
+        sys.exit(1)
+# Check for the correct ammount of arguments
+def check_args(args, required_count, message):
+    if len(args) < required_count:
+        print(message)
+        sys.exit(1)
+
+# Change status
+def mark_status(tasks, args, status):
+    check_args(args, 3, "Task ID required!")
+    task_id = get_task_id(args[2])
+    task_exists = False
+    for task in tasks:
+        if task["id"] == task_id:
+            task["status"] = status
+            print("Status was changed!")
+            task_exists = True
+    if not task_exists:
+        print(f"Task with ID {task_id} was NOT found!")
+
+# List by status
+def list_status(tasks, status=False):
+    headers = f"{'ID':<5} {'Description':<30} {'Status':<15} {'Created At':<25} {'Updated At':<25}"
+    separator = "-" * len(headers)
+
+    if not status:
+        
+        if not tasks:
+            print("No tasks found!")
+        else:
+            print("List of all tasks:")
+            print(headers)
+            print(separator)
+            for task in tasks:
+                print(f"{task['id']:<5} {task['description']:<30} {task['status']:<15} {task['createdAt'][:19].replace("T", " "):<25} {task['updatedAt'][:19].replace("T", " "):<25}")
+    else:
+        filtered = [task for task in tasks if task["status"] == status]
+        if not filtered:
+            print(f"No '{status}' tasks found!")
+        else:
+            print(f"List of all '{status}' tasks:")
+            print(headers)
+            print(separator)
+            for task in filtered:
+                print(f"{task['id']:<5} {task['description']:<30} {task['status']:<15} {task['createdAt'][:19].replace("T", " "):<25} {task['updatedAt'][:19].replace("T", " "):<25}")
+
+# Check JSON file
+try:
+    with open("tasks.json", "r") as f:
+        tasks = json.load(f)
+except FileNotFoundError:
+    tasks = []
+except json.JSONDecodeError:
+    tasks = []
+
+# User input
+args = sys.argv
+
+if len(args) < 2:
+    print("You need to enter your command! (Add, Delete, Update, List, Mark) ")
+    sys.exit(1)
+
+# Main commands
+command = args[1]
+# Add
+if command.lower() == "add":
+    check_args(args, 3, "Task description required!")
+    if tasks:
+        new_id = max(task["id"] for task in tasks) + 1
+    else:
+        new_id = 0
+    new_task = {
+        "id": new_id,
+        "description": args[2],
+        "status": "todo",
+        "createdAt": datetime.datetime.now().isoformat(),
+        "updatedAt": datetime.datetime.now().isoformat()
+    }
+    tasks.append(new_task)
+    print(f"New task '{new_task['description']}' added!")
+
+# Delete
+elif command.lower() == "delete":
+    check_args(args, 3, "Task ID required!")
+    task_id = get_task_id(args[2])
+    task_exists = False
+    for task in tasks:
+        if task["id"] == task_id:
+            task_exists = True
+    if not task_exists:
+        print(f"Task with ID {task_id} was NOT found!")
+    else:
+        tasks = [task for task in tasks if task.get("id") != task_id]
+        print("Task deleted!")
+
+# Update
+elif command.lower() == "update":
+    check_args(args, 3, "Task ID and description required!")
+    check_args(args, 4, "Task description required!")
+    task_id = get_task_id(args[2])
+    task_exists = False
+    for task in tasks:
+        if task["id"] == task_id:
+            task["description"] = args[3]
+            task["updatedAt"] = datetime.datetime.now().isoformat()
+            task_exists = True
+            break
+    if not task_exists:
+        print(f"Task with ID {task_id} was NOT found!")
+    else:
+        print("Task updated!")
+
+# List commands
+elif command.lower() == "list":
+    if len(args) == 2:
+        list_status(tasks)
+
+    elif len(args) == 3:
+        if args[2].lower() == "todo":
+            list_status(tasks, "todo")
+
+        elif args[2].lower() == "in-progress":
+            list_status(tasks, "in-progress")
+
+        elif args[2].lower() == "done":
+            list_status(tasks, "done")
+        else:
+            print("Incorrect command")
+    else:
+        print("Incorrect command")
+
+# Mark commands
+elif command.lower() == "mark-in-progress":
+    mark_status(tasks, args, "in-progress")
+
+elif command.lower() == "mark-done":
+    mark_status(tasks, args, "done")
+
+elif command.lower() == "mark-todo":
+    mark_status(tasks, args, "todo")
+
+# Help command
+elif command.lower() == "help":
+    print("""
+Available commands:
+  add <description>          - Add a new task
+  update <id> <description>  - Update a task
+  delete <id>                - Delete a task
+  mark-in-progress <id>      - Mark a task as in progress
+  mark-done <id>             - Mark a task as done
+  mark-todo <id>             - Mark a task as todo
+  list                       - List all tasks
+  list todo                  - List all todo tasks
+  list in-progress           - List all in-progress tasks
+  list done                  - List all done tasks
+  help                       - Show this help message
+    """)
+else: 
+    print("Incorrect command")
+
+# Save to JSON
+with open("tasks.json", "w") as f:
+    json.dump(tasks, f, indent=4)
