@@ -14,7 +14,7 @@ A simple command line interface app to track and manage your tasks. Built with P
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/task-tracker.git
+git clone https://github.com/I-Martes-I/Task-Tracker-CLI-project.git
 cd task-tracker
 ```
 
